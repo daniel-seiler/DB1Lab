@@ -24,3 +24,13 @@ ftrag WHERE auftrnr=2));
 -- 1.7
 SELECT teilnr, bestand FROM lager WHERE bestand>0 ORDER BY bestand ASC;
 
+-- 1.8
+
+
+
+-- 1.9
+SELECT teilnr as teilenummer, bezeichnung, nettopreis, preis as bruttopreis FROM teilestamm WHERE preis>30;
+
+-- 1.10
+SELECT einzelteilnr as teilenummer FROM teilestruktur WHERE oberteilnr=300001 AND anzahl>100;
+
