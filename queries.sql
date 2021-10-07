@@ -26,7 +26,7 @@ SELECT teilnr, bestand FROM lager WHERE bestand>0 ORDER BY bestand ASC;
 
 -- 1.8
 
-
+SELECT DISTINCT * FROM auftragsposten ORDER BY teilnr;
 
 -- 1.9
 SELECT teilnr AS teilenummer, bezeichnung, nettopreis, preis AS bruttopreis FROM teilestamm WHERE preis>30;
