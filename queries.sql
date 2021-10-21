@@ -18,8 +18,7 @@ SELECT MIN(datum) AS von, MAX(datum) AS bis FROM auftrag;
 -- 1.6
 SELECT name FROM kunde WHERE nr=(SELECT kundnr FROM auftrag WHERE auftrnr=2);
 SELECT name FROM personal WHERE persnr=(SELECT persnr FROM auftrag WHERE auftrnr=2);
-SELECT name FROM personal WHERE persnr=(SELECT vorgesetzt FROM personal WHERE persnr=(SELECT persnr FROM au
-ftrag WHERE auftrnr=2));
+SELECT name FROM personal WHERE persnr=(SELECT vorgesetzt FROM personal WHERE persnr=(SELECT persnr FROM auftrag WHERE auftrnr=2));
 
 -- 1.7
 SELECT teilnr, bestand FROM lager WHERE bestand>0 ORDER BY bestand ASC;
