@@ -9,10 +9,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JDBCFoo {
-    Connection conn = null;
+    private Connection connection = null;
 
-    public JDBCFoo(String url, String username, String password) throws SQLException {
-        this.conn = this.connectDB(url, username, password);
+    public JDBCFoo(String url, String username, String password) {
+        try {
+            this.connection = this.connectDB(url, username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private Connection connectDB(String url, String username, String password) throws SQLException {
@@ -24,7 +28,11 @@ public class JDBCFoo {
     }
 
     private void disconnectDB() throws SQLException {
-        conn.close();
+        connection.close();
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     private String getDBfromURL(String url) {
@@ -34,7 +42,7 @@ public class JDBCFoo {
         return matcher.group();
     }
     public void getDBinfo() throws SQLException {
-        DatabaseMetaData metaData = conn.getMetaData();
+        DatabaseMetaData metaData = connection.getMetaData();
         String dbProduct = metaData.getDatabaseProductName();
         String dbURL = metaData.getURL();
         // String dbName = getDBfromURL(dbURL);
