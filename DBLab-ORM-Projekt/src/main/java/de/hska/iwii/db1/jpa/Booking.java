@@ -2,6 +2,7 @@ package de.hska.iwii.db1.jpa;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -9,7 +10,6 @@ import java.util.Date;
 @Entity
 public class Booking {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "idBooking")
     private long id;
     @OneToOne
@@ -19,14 +19,13 @@ public class Booking {
     @JoinColumn(name = "idCustomer")
     private Customer customer;
     @Column(name = "bookedSeats")
-    private int numBookedSeats = 1;
+    @Min(1)
+    private int numBookedSeats;
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(name = "Datum")
     private Date date;
     
-    //Causes error? TODO
-    //@Id
     public Booking setId(long id) {
         this.id = id;
         return this;
@@ -43,7 +42,7 @@ public class Booking {
     }
    
     public Booking setNumBookedSeats(int numBookedSeats) {
-        this.numBookedSeats = ( numBookedSeats >= 1 ) ? numBookedSeats : 1;
+        this.numBookedSeats = numBookedSeats;
         return this;
     }
     
