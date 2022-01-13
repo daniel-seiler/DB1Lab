@@ -32,12 +32,14 @@ public class JPAApplication {
         Booking b3 = addBooking(2, f2, c2, 2, new Date(725834));
         Booking b4 = addBooking(3, f3, c2, 2, new Date(569348));
         
-        String hql = "SELECT k.forename FROM Customer k";
-        Query q = em.createQuery(hql);
-        List<Object> resultList = q.getResultList();
-        
-        for (Object temp : resultList) {
-            System.out.println(temp);
+        String customerSurname = "Eisenhardt";
+        List<Customer> customerList = em.createQuery("FROM Customer", Customer.class).getResultList();
+        Customer customer = customerList.stream().filter(c -> c.getSurname().equals(customerSurname)).findFirst().orElse(null);
+        List<Booking> bookingList = em.createQuery("FROM Booking", Booking.class).getResultList();
+        for (Booking tempBooking: bookingList) {
+            if (tempBooking.getCustomer().getId() == customer.getId()) {
+                System.out.println(tempBooking.getId());
+            }
         }
         em.close();
     }
