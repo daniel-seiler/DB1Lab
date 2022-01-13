@@ -12,12 +12,12 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
 		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/db1" />
-			<property name="javax.persistence.jdbc.user" value="db1" />
-			<property name="javax.persistence.jdbc.password" value="db1" />
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://datenbanken1.ddns.net:3690/" />
+            <property name="javax.persistence.jdbc.user" value="g20" />
+            <property name="javax.persistence.jdbc.password" value="XfgZfBTstd" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="create" />
 		</properties>
 	</persistence-unit>
 </persistence>
