@@ -1,46 +1,56 @@
 package de.hska.iwii.db1.jpa;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Kunde")
 public class Customer {
+    @Id
+    @Column(name = "idCustomer")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(nullable = false, name="Vorname")
-    private String foreName;
-    @Column(nullable = false, name="Nachname")
-    private String surName;
-    @Column(nullable = false, name="E-Mail")
+    private long id;
+    @NotNull
+    @Column(name="forename")
+    private String forename;
+    @NotNull
+    @Column(name="surname")
+    private String surname;
+    @NotNull
+    @Column(name="email")
     private String email;
     
-    public void setId(int id) {
+    public Customer setId(long id) {
         this.id = id;
+        return this;
     }
     
-    public void setForeName(String foreName) {
-        this.foreName = foreName;
+    public Customer setForename(String forename) {
+        this.forename = forename;
+        return this;
     }
     
-    public void setNachName(String surName) {
-        this.surName = surName;
+    public Customer setSurname(String surname) {
+        this.surname = surname;
+        return this;
     }
     
-    public void setEmail(String email) {
+    public Customer setEmail(String email) {
         this.email = email;
+        return this;
     }
     
     @Id
-    public int getId() {
+    public long getId() {
         return id;
     }
     
-    public String getForeName() {
-        return this.foreName;
+    public String getForename() {
+        return this.forename;
     }
     
-    public String getSurName() {
-        return this.surName;
+    public String getSurname() {
+        return this.surname;
     }
     
     public String getEmail() {
