@@ -1,39 +1,48 @@
 package de.hska.iwii.db1.jpa;
 
+import com.sun.istack.NotNull;
 import javax.persistence.*;
 import java.sql.Time;
 
 @Entity
-@Table(name = "Flug")
 public class Flight {
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(nullable = false, name = "Flugnummer")
+    @Column(name = "idFlight")
+    private long id;
+    @NotNull
+    @Column(name = "flightNumber")
     private String num;
-    @Column(nullable = false, name = "Startzeit")
+    @NotNull
+    @Column(name = "startTime")
     @Temporal(TemporalType.TIME)
     private Time startTime;
-    @Column(nullable = false, name = "Startflughafen")
+    @NotNull
+    @Column(name = "startAirport")
     private String startAirport;
     
-    public void setId(int id) {
+    public Flight setId(long id) {
         this.id = id;
+        return this;
     }
     
-    public void setNum(String num) {
+    public Flight setNum(String num) {
         this.num = num;
+        return this;
     }
     
-    public void setStartTime(Time startTime) {
+    public Flight setStartTime(Time startTime) {
         this.startTime = startTime;
+        return this;
     }
     
-    public void setStartAirport(String startAirport) {
+    public Flight setStartAirport(String startAirport) {
         this.startAirport = startAirport;
+        return this;
     }
     
     @Id
-    public int getId() {
+    public long getId() {
         return id;
     }
     
