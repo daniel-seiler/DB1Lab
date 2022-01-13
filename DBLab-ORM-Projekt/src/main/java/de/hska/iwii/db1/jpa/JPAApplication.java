@@ -74,7 +74,7 @@ public class JPAApplication {
                 .setDate(date)
                 .setId(id);
         em.getTransaction().begin();
-        em.persist(customer);
+        em.persist(booking);
         em.getTransaction().commit();
         return booking;
     }
