@@ -1,7 +1,6 @@
 package de.hska.iwii.db1.jpa;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,7 +8,6 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 public class JPAApplication {
     private EntityManagerFactory entityManagerFactory;
@@ -24,9 +22,9 @@ public class JPAApplication {
     public void testFlights() {
         Customer c1 = addCustomer(0, "Margarete", "Eisenhardt", "mega.eisenhardt@web.de");
         Customer c2 = addCustomer(1, "Dorothea", "Krasnewicz", "doro.krasnewicz@yahoo.com");
-        Flight f1 = addFlight(0, "NER236", new Time(12039493), "Guangzhou Baiyun International Airport");
-        Flight f2 = addFlight(1, "RHN563", new Time(190587), "Bad Kissing Airfield");
-        Flight f3 = addFlight(2, "ABC109", new Time(192385), "Fak Fak Airport");
+        Flight f1 = addFlight(0, "NER236", new Date(12039493), "Guangzhou Baiyun International Airport");
+        Flight f2 = addFlight(1, "RHN563", new Date(190587), "Bad Kissing Airfield");
+        Flight f3 = addFlight(2, "ABC109", new Date(192385), "Fak Fak Airport");
         Booking b1 = addBooking(0, f1, c1, 2, new Date(298346));
         Booking b2 = addBooking(1, f2, c1, 2, new Date(985341));
         Booking b3 = addBooking(2, f2, c2, 2, new Date(725834));
@@ -44,12 +42,11 @@ public class JPAApplication {
         em.close();
     }
     
-    public Flight addFlight(long id, String flightNumber, Time startTime, String startAirport) {
+    public Flight addFlight(long id, String flightNumber, Date startTime, String startAirport) {
         Flight flight = new Flight()
                 .setNum(flightNumber)
                 .setStartTime(startTime)
-                .setStartAirport(startAirport)
-                .setId(id);
+                .setStartAirport(startAirport);
         em.getTransaction().begin();
         em.persist(flight);
         em.getTransaction().commit();
@@ -60,8 +57,7 @@ public class JPAApplication {
         Customer customer = new Customer()
                 .setForename(forename)
                 .setSurname(surname)
-                .setEmail(email)
-                .setId(id);
+                .setEmail(email);
         em.getTransaction().begin();
         em.persist(customer);
         em.getTransaction().commit();
@@ -73,8 +69,7 @@ public class JPAApplication {
                 .setFlight(flight)
                 .setCustomer(customer)
                 .setNumBookedSeats(numBookedSeats)
-                .setDate(date)
-                .setId(id);
+                .setDate(date);
         em.getTransaction().begin();
         em.persist(booking);
         em.getTransaction().commit();

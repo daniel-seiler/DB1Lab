@@ -2,7 +2,7 @@ package de.hska.iwii.db1.jpa;
 
 import com.sun.istack.NotNull;
 import javax.persistence.*;
-import java.sql.Time;
+import java.util.Date;
 
 @Entity
 public class Flight {
@@ -16,7 +16,7 @@ public class Flight {
     @NotNull
     @Column(name = "startTime")
     @Temporal(TemporalType.TIME)
-    private Time startTime;
+    private Date startTime;
     @NotNull
     @Column(name = "startAirport")
     private String startAirport;
@@ -31,7 +31,7 @@ public class Flight {
         return this;
     }
     
-    public Flight setStartTime(Time startTime) {
+    public Flight setStartTime(Date startTime) {
         this.startTime = startTime;
         return this;
     }
@@ -49,7 +49,7 @@ public class Flight {
         return num;
     }
     
-    public Time getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
     
