@@ -7,9 +7,9 @@ import javax.persistence.*;
 @Entity
 public class Customer {
     @Id
-    @Column(name = "idCustomer")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @JoinColumn(name = "idCustomer")
+    @GeneratedValue
+    private Long id;
     @NotNull
     @Column(name="forename")
     private String forename;
@@ -20,7 +20,7 @@ public class Customer {
     @Column(name="email")
     private String email;
     
-    public Customer setId(long id) {
+    public Customer setId(Long id) {
         this.id = id;
         return this;
     }
@@ -40,8 +40,7 @@ public class Customer {
         return this;
     }
     
-    @Id
-    public long getId() {
+    public Long getId() {
         return id;
     }
     

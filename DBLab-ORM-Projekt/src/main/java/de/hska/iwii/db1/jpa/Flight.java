@@ -7,9 +7,9 @@ import java.sql.Time;
 @Entity
 public class Flight {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "idFlight")
-    private long id;
+    @JoinColumn(name = "idFlight")
+    @GeneratedValue
+    private Long id;
     @NotNull
     @Column(name = "flightNumber")
     private String num;
@@ -21,7 +21,7 @@ public class Flight {
     @Column(name = "startAirport")
     private String startAirport;
     
-    public Flight setId(long id) {
+    public Flight setId(Long id) {
         this.id = id;
         return this;
     }
@@ -41,8 +41,7 @@ public class Flight {
         return this;
     }
     
-    @Id
-    public long getId() {
+    public Long getId() {
         return id;
     }
     

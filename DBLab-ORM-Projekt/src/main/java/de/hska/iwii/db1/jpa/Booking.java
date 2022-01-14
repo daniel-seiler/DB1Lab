@@ -10,7 +10,8 @@ import java.util.Date;
 @Entity
 public class Booking {
     @Id
-    @Column(name = "idBooking")
+    @JoinColumn(name = "idBooking")
+    @GeneratedValue
     private long id;
     @OneToOne
     @JoinColumn(name = "idFlight")
@@ -26,7 +27,7 @@ public class Booking {
     @Column(name = "Datum")
     private Date date;
     
-    public Booking setId(long id) {
+    public Booking setId(Long id) {
         this.id = id;
         return this;
     }
@@ -51,7 +52,7 @@ public class Booking {
         return this;
     }
     
-    public long getId() {
+    public Long getId() {
         return id;
     }
     
