@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-ear" name="DBLab-ORM-Projekt:ear exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/DBLab_ORM_Projekt_ear_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="DBLab-ORM-Projekt/javaeeApplication/javaEEApplication" />
+    </root>
+  </artifact>
+</component>
