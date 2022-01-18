@@ -1,5 +1,7 @@
 package de.hska.iwii.db1.jdbc;
 
+import oracle.jdbc.proxy.annotation.Pre;
+
 import java.sql.*;
 
 public class JDBCQueries {
@@ -47,14 +49,14 @@ public class JDBCQueries {
             if (i != numberOfColumns) { sb.append("+"); }
         }
         sb.append("-");
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     private void printBody(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int numberOfColumns = rsmd.getColumnCount();
         rs.first();
-        while (rs.next()) {
+        do {
             for (int i = 1; i <= numberOfColumns; i++) {
                 int columnWidth = rsmd.getColumnDisplaySize(i);
                 boolean isInt = rsmd.getColumnTypeName(i).startsWith("int");
@@ -64,7 +66,7 @@ public class JDBCQueries {
                 System.out.printf(template, rs.getString(i));
             }
             System.out.print("\n");
-        }
+        } while (rs.next());
     }
 
     /*
@@ -109,7 +111,71 @@ public class JDBCQueries {
         printClientsWithSuppliers("%");
     }
 
+    /*
+    private int getColumnMax(String column, String table, Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("SELECT ? FROM ? SORT BY ? DESC",
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        statement.setString(1, column);
+        statement.setString(3, column);
+        statement.setString(2, table);
+        ResultSet rs = statement.executeQuery();
+        rs.next();
+        return rs.getInt(1);
+    }
+    */
+
+    private int getColumnMax(String column, String table, Connection connection) throws SQLException {
+        String query = String.format("SELECT max(%s) FROM %s", column, table);
+        Statement statement = connection.createStatement(
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE
+        );
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
+        return rs.getInt(1);
+
+    }
+    public void addNewClientAndContract() throws SQLException {
+        int persID = 9; // Azubi macht's
+        int partID = 500015;
+        int customerID = getColumnMax("nr", "kunde", connection) + 1;
+        int orderID = getColumnMax("auftrnr", "auftrag", connection) + 1;
+        int orderItemID = getColumnMax("posnr", "auftragsposten", connection) + 1;
+
+        connection.setAutoCommit(false);
+        String addClientQuery = "INSERT INTO kunde (nr, name, strasse, plz, ort, sperre)\n" +
+                "VALUES (?, 'Paules Bikeshop', 'Fahrradgasse 1', 76135, 'Karlsruhe', '0')";
+        PreparedStatement addClient = connection.prepareStatement(addClientQuery);
+        addClient.setInt(1, customerID);
+        addClient.executeUpdate();
+
+        String addOrderQuery = "INSERT INTO auftrag (auftrnr, datum, kundnr, persnr)\n" +
+                "VALUES (?, NOW(), ?, ?)";
+        PreparedStatement addOrder = connection.prepareStatement(addOrderQuery);
+        addOrder.setInt(1, orderID);
+        addOrder.setInt(2, customerID);
+        addOrder.setInt(3, persID);
+        addOrder.executeUpdate();
+
+        String addOrderItemQuery = "INSERT INTO auftragsposten (posnr, auftrnr, teilnr, anzahl, gesamtpreis)\n" +
+                "VALUES (?, ?, 500015, 5, 3000)";
+        PreparedStatement addOrderItem = connection.prepareStatement(addOrderItemQuery);
+        addOrderItem.setInt(1, orderItemID);
+        addOrderItem.setInt(2, orderID);
+        addOrderItem.executeUpdate();
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            System.err.println("Transaction is being rolled back");
+            connection.rollback();
+        }
+    }
+
     public static void main (String[] args) {
+        /*
+        Task 4.1: Establish database connection
+         */
         String url = "jdbc:postgresql://datenbanken1.ddns.net:3690/g20";
         String username = "g20";
         String password = "XfgZfBTstd";
@@ -117,11 +183,17 @@ public class JDBCQueries {
         JDBCFoo pgsql = new JDBCFoo(url, username, password);
         Connection conn = pgsql.getConnection();
         try {
+            System.out.println("Connecting...");
             JDBCQueries shop_db = new JDBCQueries(conn);
-            shop_db.printStaff();
-            shop_db.printClientsWithSuppliers("%Fahr%");
+//            System.out.println("Print Staff:");
+//            shop_db.printStaff();
+            System.out.println("Add new clients and contracts:");
+            shop_db.addNewClientAndContract();
+            System.out.println("Print clients with suppliers::");
+            shop_db.printClientsWithSuppliers();
         } catch (SQLException e) {
-            e.getMessage();
+            e.printStackTrace();
         }
+
     }
 }
