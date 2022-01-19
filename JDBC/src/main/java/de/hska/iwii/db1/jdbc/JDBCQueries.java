@@ -71,7 +71,7 @@ public class JDBCQueries {
 
     /*
     Task 4.2
-    print staff with staff no, place, occupation
+    print staff with staff number, place, occupation
      */
     public void printStaff() throws SQLException {
         String query = "SELECT persnr, name, ort, aufgabe FROM personal";
@@ -89,7 +89,7 @@ public class JDBCQueries {
     print client <-> supplier relationship with optional client search
      */
     public void printClientsWithSuppliers(String search) throws SQLException {
-        String query = "SELECT k.name as kunde, k.nr as knr, lant.name as lieferant, lant.nr as lnr\n" +
+        String query = "SELECT k.name as kunde, k.nr as knr, lant.name as lieferant, lant.nr as lnr, k.sperre as sperre\n" +
                 "FROM auftragsposten as ap\n" +
                 "INNER JOIN lieferung lung on ap.teilnr = lung.teilnr\n" +
                 "INNER JOIN lieferant lant on lung.liefnr = lant.nr\n" +
@@ -111,21 +111,7 @@ public class JDBCQueries {
         printClientsWithSuppliers("%");
     }
 
-    /*
-    private int getColumnMax(String column, String table, Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("SELECT ? FROM ? SORT BY ? DESC",
-                ResultSet.TYPE_SCROLL_INSENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
-        statement.setString(1, column);
-        statement.setString(3, column);
-        statement.setString(2, table);
-        ResultSet rs = statement.executeQuery();
-        rs.next();
-        return rs.getInt(1);
-    }
-    */
-
-    private int getColumnMax(String column, String table, Connection connection) throws SQLException {
+    private int getColumnMax(String column, String table) throws SQLException {
         String query = String.format("SELECT max(%s) FROM %s", column, table);
         Statement statement = connection.createStatement(
                 ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -136,12 +122,17 @@ public class JDBCQueries {
         return rs.getInt(1);
 
     }
+
+    /*
+    Task 4.4.1
+    Add Client
+     */
     public void addNewClientAndContract() throws SQLException {
         int persID = 9; // Azubi macht's
         int partID = 500015;
-        int customerID = getColumnMax("nr", "kunde", connection) + 1;
-        int orderID = getColumnMax("auftrnr", "auftrag", connection) + 1;
-        int orderItemID = getColumnMax("posnr", "auftragsposten", connection) + 1;
+        int customerID = getColumnMax("nr", "kunde") + 1;
+        int orderID = getColumnMax("auftrnr", "auftrag") + 1;
+        int orderItemID = getColumnMax("posnr", "auftragsposten") + 1;
 
         connection.setAutoCommit(false);
         String addClientQuery = "INSERT INTO kunde (nr, name, strasse, plz, ort, sperre)\n" +
@@ -172,6 +163,46 @@ public class JDBCQueries {
         }
     }
 
+    /*
+    Task 4.4.2
+    set client ban
+    */
+    public void setClientBan(int clientID, boolean ban) throws SQLException {
+        String setBanQuery = "UPDATE kunde SET sperre = ? WHERE nr = ?";
+        PreparedStatement setBan = connection.prepareStatement(setBanQuery);
+        setBan.setString(1, String.valueOf(ban ? '1' : '0'));
+        setBan.setInt(2, clientID);
+        setBan.executeUpdate();
+    }
+
+    /*
+    Task 4.4.3
+    delete client with depending entries in 'auftrag' and 'auftragsposten'
+     */
+    public void deleteClient(int clientID) throws SQLException {
+        // delete from auftragsposten
+        PreparedStatement deleteClientQuery = connection.prepareStatement("DELETE FROM auftragsposten\n" +
+                "USING auftrag\n" +
+                "WHERE auftragsposten.auftrnr = auftrag.auftrnr AND auftrag.kundnr = ?;");
+        deleteClientQuery.setInt(1, clientID);
+        deleteClientQuery.executeUpdate();
+
+        // delete from auftrag
+        deleteClientQuery = connection.prepareStatement(
+                "DELETE FROM auftrag\n" +
+                "    USING kunde\n" +
+                "WHERE auftrag.kundnr = kunde.nr AND kunde.nr= ?");
+        deleteClientQuery.setInt(1, clientID);
+        deleteClientQuery.executeUpdate();
+
+        // delete from kunde
+        deleteClientQuery = connection.prepareStatement(
+                "DELETE FROM kunde\n" +
+                "WHERE kunde.nr = ?;");
+        deleteClientQuery.setInt(1, clientID);
+        deleteClientQuery.executeUpdate();
+    }
+
     public static void main (String[] args) {
         /*
         Task 4.1: Establish database connection
@@ -185,12 +216,34 @@ public class JDBCQueries {
         try {
             System.out.println("Connecting...");
             JDBCQueries shop_db = new JDBCQueries(conn);
-//            System.out.println("Print Staff:");
-//            shop_db.printStaff();
-            System.out.println("Add new clients and contracts:");
-            shop_db.addNewClientAndContract();
-            System.out.println("Print clients with suppliers::");
+            System.out.println("Print Staff:");
+            shop_db.printStaff();
+            System.out.println("[+] Reinitialize DB");
+            JDBCBikeShop jb = new JDBCBikeShop();
+            jb.reInitializeDB(conn);
+
+
+            System.out.println("[+] Print clients with suppliers:");
             shop_db.printClientsWithSuppliers();
+
+            System.out.println("[+] Add new clients and contracts...");
+            shop_db.addNewClientAndContract();
+
+            System.out.println("[+] Print new client with suppliers:");
+            shop_db.printClientsWithSuppliers("Paul%");
+
+
+            System.out.println("[+] Ban new client:");
+            shop_db.setClientBan(shop_db.getColumnMax("nr", "kunde"), true);
+            shop_db.printClientsWithSuppliers("Paul%");
+            
+
+            System.out.println("[+] Delete new client");
+            shop_db.deleteClient(7);
+
+            System.out.println("[+] Print clients with suppliers:");
+            shop_db.printClientsWithSuppliers();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
