@@ -10,13 +10,13 @@ import java.util.Date;
 @Entity
 public class Booking {
     @Id
-    @JoinColumn(name = "idBooking")
+    @Column(name = "idBooking")
     @GeneratedValue
     private long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idFlight")
     private Flight flight;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idCustomer")
     private Customer customer;
     @Column(name = "bookedSeats")

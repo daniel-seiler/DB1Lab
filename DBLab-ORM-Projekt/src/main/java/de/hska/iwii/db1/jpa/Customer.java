@@ -3,11 +3,12 @@ package de.hska.iwii.db1.jpa;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Customer {
     @Id
-    @JoinColumn(name = "idCustomer")
+    @Column(name = "idCustomer")
     @GeneratedValue
     private Long id;
     @NotNull
@@ -19,6 +20,9 @@ public class Customer {
     @NotNull
     @Column(name="email")
     private String email;
+    @OneToMany
+    @JoinColumn(name = "idCustomer")
+    private List<Booking> booking;
     
     public Customer setId(Long id) {
         this.id = id;

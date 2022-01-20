@@ -3,11 +3,12 @@ package de.hska.iwii.db1.jpa;
 import com.sun.istack.NotNull;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Flight {
     @Id
-    @JoinColumn(name = "idFlight")
+    @Column(name = "idFlight")
     @GeneratedValue
     private Long id;
     @NotNull
@@ -20,6 +21,9 @@ public class Flight {
     @NotNull
     @Column(name = "startAirport")
     private String startAirport;
+    @OneToMany
+    @JoinColumn(name = "idFlight")
+    private List<Booking> bookingList;
     
     public Flight setId(Long id) {
         this.id = id;
